@@ -1,0 +1,58 @@
+<!--@if($logged_info->is_admin == 'Y' && Context::get('ggstatus') == 'ggexcel')-->
+{@
+$xls_filename = 'woorimail_group_'.Context::get('oid').'_'.date('YmdHis').'.xls';
+header("Content-Type: application/vnd.ms-excel;charset=utf-8"); 
+header("Content-Disposition: attachment; filename=$xls_filename"); 
+print("<meta http-equiv=\"Content-Type\" content=\"application/vnd.ms-excel; charset=utf-8\">"); 
+$obj->page = Context::get('oid');
+$obj->list_count = $widget_info->gg_count; // 묶음 갯수
+$output = executeQueryArray('member.getMemberList',$obj);
+
+}
+<table border="1">
+<!--@foreach($output->data as $key => $val)-->
+	<tr>
+		<td>{$val->nick_name}</td>
+		<td>{$val->email_address}</td>
+		<td>m_group_{Context::get('oid')}</td>
+		<td style="mso-number-format:'0_ ';">{$val->regdate}</td>
+	</tr>
+<!--@end-->
+</table>
+<script>document.location.href="{getUrl('','mid',$mid)}";</script>
+{@ exit;}
+<!--@end-->
+
+
+<!--@if($logged_info->is_admin == 'Y')-->
+<load target="css/ggstyle.css" />
+<load target="css/button_flat.css" />
+<h1>우리알림용 회원 이메일 정보 그룹생성 엑셀파일 다운로드</h1>
+<h3>- 먼저 회원그룹을 생성하셔야 합니다.(m_group_1~부터)</h3>
+<br />
+<div class="gs">
+
+<table border="0" class="list_table">
+		<caption>
+			<strong>단위 : {number_format($widget_info->gg_count)} 명 씩</strong>
+		</caption>
+	<thead>
+		<tr>
+			<th scope="col"><div>번호</div></th>
+			<th scope="col"><div>엑셀 다운로드</div></th>
+			<th scope="col"><div>그룹명</div></th>
+		</tr>
+	</thead>
+	<tbody>
+		<!--@for($i=0;$i<$widget_info->total_page;$i++)-->
+		<tr>
+			<td>{$i+1}</td>
+			<td class="center"><a href="{getUrl('','mid',$mid,'ggstatus','ggexcel',oid,($i+1))}" class="xet_btn medium silver">m_group_{($i+1)} 엑셀 다운로드</a></td>
+			<td>m_group_{($i+1)}</td>
+		</tr>
+		<!--@end-->
+
+	</tbody>
+</table>
+</div>
+<!--@end-->
